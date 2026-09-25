@@ -88,12 +88,46 @@
   }
   @keyframes spin{to{transform:rotate(360deg)}}
 
+  .fs-btn{
+    position:absolute; top:.6rem; right:.6rem; z-index:10;
+    width:2rem; height:2rem; border-radius:.6rem;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
+    color:#94a3b8; cursor:pointer; padding:0;
+    transition:background .15s ease, color .15s ease;
+  }
+  .fs-btn:hover{ background:rgba(255,255,255,.12); color:#e2e8f0; }
+  .fs-btn svg{ width:1.05rem; height:1.05rem; display:block; }
+
+  /* Modo tela cheia: o frame vira o próprio elemento em fullscreen,
+     então ele deve ocupar 100% da tela e continuar quadrado. */
+  .frame:fullscreen,
+  .frame:-webkit-full-screen{
+    width:100vmin !important;
+    height:100vmin !important;
+    max-width:none; max-height:none;
+    border-radius:0;
+    display:flex; align-items:center; justify-content:center;
+    background:#05070c;
+  }
+  .frame:fullscreen .inner,
+  .frame:-webkit-full-screen .inner{
+    position:absolute;
+  }
+  body:has(.frame:fullscreen) .fs-btn svg,
+  body:has(.frame:-webkit-full-screen) .fs-btn svg{
+    transform:scale(-1);
+  }
 
 </style>
 </head>
 <body>
 
-  <div class="frame">
+  <div class="frame" id="previewFrame">
+    <button class="fs-btn" id="fsBtn" type="button" onclick="toggleFullscreen()" title="Tela cheia" aria-label="Alternar tela cheia">
+      <svg id="fsIconExpand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+      <svg id="fsIconCollapse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg>
+    </button>
     <div class="badge">Preview · Éter</div>
     <div class="notch"></div>
     <div class="inner" id="innerBox">
@@ -136,6 +170,26 @@
 
   window.addEventListener("resize", fitScale);
 
+  window.toggleFullscreen = function(){
+    var el = document.getElementById("previewFrame");
+    var isFs = document.fullscreenElement || document.webkitFullscreenElement;
+    if (!isFs) {
+      if (el.requestFullscreen) el.requestFullscreen();
+      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    }
+  };
+
+  function updateFsIcon(){
+    var isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    document.getElementById("fsIconExpand").style.display = isFs ? "none" : "block";
+    document.getElementById("fsIconCollapse").style.display = isFs ? "block" : "none";
+    document.getElementById("fsBtn").title = isFs ? "Sair da tela cheia" : "Tela cheia";
+  }
+  document.addEventListener("fullscreenchange", updateFsIcon);
+  document.addEventListener("webkitfullscreenchange", updateFsIcon);
 
 })();
 </script>
