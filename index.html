@@ -48,6 +48,28 @@
     from{ transform:scale(.96); opacity:0; }
     to{ transform:scale(1); opacity:1; }
   }
+  /* Em tela cheia, o navegador por padrão estica o elemento pra cobrir
+     a tela inteira. Aqui a gente trava o .frame num quadrado
+     (min(largura, altura) da tela) centralizado, com barras pretas
+     nas sobras, em vez de deixar ele esticar. */
+  .frame:fullscreen,
+  .frame:-webkit-full-screen,
+  .frame:-moz-full-screen,
+  .frame:-ms-fullscreen{
+    width:100vmin;
+    height:100vmin;
+    max-width:100vw;
+    max-height:100vh;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    margin:0;
+  }
+  .frame::backdrop,
+  .frame:-webkit-full-screen{
+    background:#000;
+  }
   .badge{
     position:absolute; top:.85rem; left:50%; transform:translateX(-50%);
     font-size:.6rem; color:#64748b; letter-spacing:.08em; z-index:5;
