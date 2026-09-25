@@ -94,33 +94,6 @@
     cursor:pointer; backdrop-filter:blur(6px);
   }
   .fs-btn:hover{background:rgba(45,212,191,.15); border-color:rgba(45,212,191,.4)}
-
-  /* Modo tela cheia (manual, via botão) OU automático no celular:
-     sem moldura, sem margens, o site ocupa 100% da janela. */
-  @media (max-width:640px){
-    body{padding:0}
-    .frame{
-      width:100vw; height:100vh; aspect-ratio:auto;
-      border-radius:0; border:0; box-shadow:none; padding:0;
-    }
-    .badge, .notch{ display:none; }
-    .inner{
-      top:0; bottom:0; left:0; right:0;
-      border-radius:0; border:0; box-shadow:none;
-    }
-  }
-  body.fullscreen-mode{padding:0}
-  body.fullscreen-mode .frame{
-    width:100vw; height:100vh; aspect-ratio:auto;
-    border-radius:0; border:0; box-shadow:none; padding:0;
-  }
-  body.fullscreen-mode .badge,
-  body.fullscreen-mode .notch{ display:none; }
-  body.fullscreen-mode .inner{
-    top:0; bottom:0; left:0; right:0;
-    border-radius:0; border:0; box-shadow:none;
-  }
-  body.fullscreen-mode .fs-btn{ display:none; }
 </style>
 </head>
 <body>
@@ -170,13 +143,11 @@
 
   var fsBtn = document.getElementById("fsBtn");
   fsBtn.addEventListener("click", function(){
-    document.body.classList.add("fullscreen-mode");
+    // Só pede a tela cheia de verdade do navegador (esconde a barra do
+    // celular). NÃO mexe no layout — o quadrado continua igual.
     var el = document.documentElement;
     var req = el.requestFullscreen || el.webkitRequestFullscreen;
     if (req) { try { req.call(el); } catch(e){} }
-  });
-  document.addEventListener("fullscreenchange", function(){
-    if (!document.fullscreenElement) document.body.classList.remove("fullscreen-mode");
   });
 })();
 </script>
