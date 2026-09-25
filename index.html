@@ -12,10 +12,19 @@
     background:
       radial-gradient(60% 50% at 30% 15%, rgba(45,212,191,.10), transparent 60%),
       radial-gradient(55% 45% at 80% 85%, rgba(167,139,250,.10), transparent 60%),
+      radial-gradient(80% 80% at 50% 50%, rgba(255,255,255,.03), transparent 70%),
       #05070c;
     display:flex; align-items:center; justify-content:center;
     font-family:'Inter',system-ui,-apple-system,sans-serif;
     padding:2rem;
+    position:relative;
+  }
+  /* Vinheta escura: escurece as bordas da janela pra puxar o olho
+     pro quadrado no centro, tipo um "spotlight" de apresentação. */
+  body::before{
+    content:"";
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:radial-gradient(60% 60% at 50% 50%, transparent 45%, rgba(0,0,0,.55) 100%);
   }
   .frame{
     width:min(88vw,88vh);
@@ -26,10 +35,16 @@
     box-shadow:
       0 40px 100px rgba(0,0,0,.6),
       0 0 0 1px rgba(255,255,255,.02) inset,
-      0 0 60px rgba(45,212,191,.06);
+      0 0 90px rgba(45,212,191,.12);
     position:relative;
     overflow:hidden;
     padding:1.1rem;
+    z-index:1;
+    animation:focusIn .5s ease-out;
+  }
+  @keyframes focusIn{
+    from{ transform:scale(.96); opacity:0; }
+    to{ transform:scale(1); opacity:1; }
   }
   .badge{
     position:absolute; top:.85rem; left:50%; transform:translateX(-50%);
@@ -109,7 +124,7 @@
 </style>
 </head>
 <body>
-  <button class="fs-btn" id="fsBtn" type="button">⛶ Tela cheia</button>
+  <button class="fs-btn" id="fsBtn" type="button">⛶ Tela cheia (sem barra do celular)</button>
   <div class="frame">
     <div class="badge">Preview · Éter</div>
     <div class="notch"></div>
