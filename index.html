@@ -8,6 +8,7 @@
   :root{ --top:7.5%; --bottom:7.5%; --side:8.5%; }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0}
+  body{min-height:100dvh}
   body{
     background:
       radial-gradient(60% 50% at 30% 15%, rgba(45,212,191,.10), transparent 60%),
@@ -27,8 +28,8 @@
     background:radial-gradient(60% 60% at 50% 50%, transparent 45%, rgba(0,0,0,.55) 100%);
   }
   .frame{
-    width:min(88vw,88vh);
-    aspect-ratio:1/1;
+    width:88vmin;
+    height:88vmin;
     background:linear-gradient(180deg,#141b2c,#0b101c 40%);
     border-radius:2rem;
     border:1px solid rgba(255,255,255,.08);
@@ -41,6 +42,7 @@
     padding:1.1rem;
     z-index:1;
     animation:focusIn .5s ease-out;
+    flex-shrink:0;
   }
   @keyframes focusIn{
     from{ transform:scale(.96); opacity:0; }
