@@ -28,8 +28,8 @@
     background:radial-gradient(60% 60% at 50% 50%, transparent 45%, rgba(0,0,0,.55) 100%);
   }
   .frame{
-    width:88vmin;
-    height:88vmin;
+    width:97vmin;
+    height:97vmin;
     background:linear-gradient(180deg,#141b2c,#0b101c 40%);
     border-radius:2rem;
     border:1px solid rgba(255,255,255,.08);
@@ -96,10 +96,19 @@
     cursor:pointer; backdrop-filter:blur(6px);
   }
   .fs-btn:hover{background:rgba(45,212,191,.15); border-color:rgba(45,212,191,.4)}
+  .fs-exit{
+    display:none;
+    position:fixed; top:.6rem; right:.6rem; z-index:60;
+    width:1.8rem; height:1.8rem; border-radius:50%;
+    background:rgba(0,0,0,.4); color:rgba(255,255,255,.55);
+    border:1px solid rgba(255,255,255,.12); font-size:.75rem;
+    cursor:pointer;
+  }
 </style>
 </head>
 <body>
   <button class="fs-btn" id="fsBtn" type="button">⛶ Tela cheia (sem barra do celular)</button>
+  <button class="fs-exit" id="fsExitBtn" type="button" title="Sair da tela cheia">✕</button>
   <div class="frame">
     <div class="badge">Preview · Éter</div>
     <div class="notch"></div>
@@ -144,12 +153,61 @@
   window.addEventListener("resize", fitScale);
 
   var fsBtn = document.getElementById("fsBtn");
+  var fsExitBtn = document.getElementById("fsExitBtn");
+  var frameEl = document.querySelector(".frame");
+  var badgeEl = document.querySelector(".badge");
+  var notchEl = document.querySelector(".notch");
+  var manualFs = false;
+
+  function applyManualFullscreen(on){
+    manualFs = on;
+    if (on){
+      frameEl.style.width = "100vw";
+      frameEl.style.height = "100dvh";
+      frameEl.style.borderRadius = "0";
+      frameEl.style.border = "0";
+      frameEl.style.boxShadow = "none";
+      if (badgeEl) badgeEl.style.display = "none";
+      if (notchEl) notchEl.style.display = "none";
+    } else {
+      frameEl.style.width = "";
+      frameEl.style.height = "";
+      frameEl.style.borderRadius = "";
+      frameEl.style.border = "";
+      frameEl.style.boxShadow = "";
+      if (badgeEl) badgeEl.style.display = "";
+      if (notchEl) notchEl.style.display = "";
+      if (document.exitFullscreen && document.fullscreenElement) {
+        try { document.exitFullscreen(); } catch(e){}
+      }
+    }
+    fsBtn.style.display = on ? "none" : "";
+    fsExitBtn.style.display = on ? "" : "none";
+  }
+
   fsBtn.addEventListener("click", function(){
-    // Só pede a tela cheia de verdade do navegador (esconde a barra do
-    // celular). NÃO mexe no layout — o quadrado continua igual.
+    // Sempre aplica o modo "tela cheia" visual (garante funcionar em
+    // qualquer navegador/sandbox), e por cima tenta o Fullscreen API
+    // real do navegador (esconde barra de status quando permitido).
+    applyManualFullscreen(true);
     var el = document.documentElement;
     var req = el.requestFullscreen || el.webkitRequestFullscreen;
     if (req) { try { req.call(el); } catch(e){} }
+  });
+
+  fsExitBtn.addEventListener("click", function(){
+    applyManualFullscreen(false);
+  });
+
+  function syncFsBtn(){
+    var isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    if (!isFs && manualFs) applyManualFullscreen(false);
+  }
+  document.addEventListener("fullscreenchange", syncFsBtn);
+  document.addEventListener("webkitfullscreenchange", syncFsBtn);
+
+  document.addEventListener("keydown", function(e){
+    if (manualFs && e.key === "Escape") applyManualFullscreen(false);
   });
 })();
 </script>
