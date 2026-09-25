@@ -71,7 +71,17 @@
   }
   @keyframes spin{to{transform:rotate(360deg)}}
 
-  /* No celular, tela cheia: sem moldura, sem margens decorativas */
+  .fs-btn{
+    position:fixed; top:1rem; right:1rem; z-index:50;
+    background:rgba(11,16,28,.85); color:#e2e8f0;
+    border:1px solid rgba(255,255,255,.15); border-radius:9999px;
+    padding:.5rem .9rem; font-size:.75rem; font-family:'Inter',system-ui,sans-serif;
+    cursor:pointer; backdrop-filter:blur(6px);
+  }
+  .fs-btn:hover{background:rgba(45,212,191,.15); border-color:rgba(45,212,191,.4)}
+
+  /* Modo tela cheia (manual, via botão) OU automático no celular:
+     sem moldura, sem margens, o site ocupa 100% da janela. */
   @media (max-width:640px){
     body{padding:0}
     .frame{
@@ -84,9 +94,22 @@
       border-radius:0; border:0; box-shadow:none;
     }
   }
+  body.fullscreen-mode{padding:0}
+  body.fullscreen-mode .frame{
+    width:100vw; height:100vh; aspect-ratio:auto;
+    border-radius:0; border:0; box-shadow:none; padding:0;
+  }
+  body.fullscreen-mode .badge,
+  body.fullscreen-mode .notch{ display:none; }
+  body.fullscreen-mode .inner{
+    top:0; bottom:0; left:0; right:0;
+    border-radius:0; border:0; box-shadow:none;
+  }
+  body.fullscreen-mode .fs-btn{ display:none; }
 </style>
 </head>
 <body>
+  <button class="fs-btn" id="fsBtn" type="button">⛶ Tela cheia</button>
   <div class="frame">
     <div class="badge">Preview · Éter</div>
     <div class="notch"></div>
@@ -129,6 +152,17 @@
   }
 
   window.addEventListener("resize", fitScale);
+
+  var fsBtn = document.getElementById("fsBtn");
+  fsBtn.addEventListener("click", function(){
+    document.body.classList.add("fullscreen-mode");
+    var el = document.documentElement;
+    var req = el.requestFullscreen || el.webkitRequestFullscreen;
+    if (req) { try { req.call(el); } catch(e){} }
+  });
+  document.addEventListener("fullscreenchange", function(){
+    if (!document.fullscreenElement) document.body.classList.remove("fullscreen-mode");
+  });
 })();
 </script>
 </body>
