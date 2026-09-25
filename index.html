@@ -48,13 +48,14 @@
     from{ transform:scale(.96); opacity:0; }
     to{ transform:scale(1); opacity:1; }
   }
-  /* TELA CHEIA: mantém o visual de "aparelho" — moldura centralizada gigante, igual à imagem de referência */
+  /* Tela cheia: o navegador entra em fullscreen, mas o ÉTER continua dentro de uma moldura quadrada. */
+  html:fullscreen, html:-webkit-full-screen{ background:#05070c !important; }
   .frame:fullscreen,
   .frame:-webkit-full-screen,
   .frame:-moz-full-screen,
   .frame:-ms-fullscreen{
-    width:90vmin !important;
-    height:90vmin !important;
+    width:min(92vmin,1100px) !important;
+    height:min(92vmin,1100px) !important;
     position:fixed !important;
     top:50% !important;
     left:50% !important;
@@ -132,10 +133,21 @@
   .fs-btn:hover{ background:rgba(255,255,255,.12); color:#e2e8f0; }
   .fs-btn svg{ width:1.05rem; height:1.05rem; display:block; }
 
+  html.doc-fullscreen body{
+    width:100vw !important; height:100dvh !important; min-height:100dvh !important;
+    margin:0 !important; padding:0 !important; overflow:hidden !important;
+    display:flex !important; align-items:center !important; justify-content:center !important;
+    background:#05070c !important;
+  }
+  html.doc-fullscreen .frame{
+    width:min(92vmin,1100px) !important; height:min(92vmin,1100px) !important;
+    margin:0 !important; flex-shrink:0 !important;
+  }
+
   /* Fallback via classe (JS): mesmas regras, sem depender do :fullscreen do CSS */
   .frame.fs-mode{
-    width:90vmin !important;
-    height:90vmin !important;
+    width:min(92vmin,1100px) !important;
+    height:min(92vmin,1100px) !important;
     position:fixed !important;
     top:50% !important;
     left:50% !important;
@@ -213,11 +225,11 @@
   window.addEventListener("resize", fitScale);
 
   window.toggleFullscreen = function(){
-    var el = document.getElementById("previewFrame");
     var isFs = document.fullscreenElement || document.webkitFullscreenElement;
     if (!isFs) {
-      if (el.requestFullscreen) el.requestFullscreen();
-      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+      var root = document.documentElement;
+      if (root.requestFullscreen) root.requestFullscreen({navigationUI:"hide"});
+      else if (root.webkitRequestFullscreen) root.webkitRequestFullscreen();
     } else {
       if (document.exitFullscreen) document.exitFullscreen();
       else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
@@ -226,6 +238,7 @@
 
   function updateFsIcon(){
     var isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    document.documentElement.classList.toggle("doc-fullscreen", isFs);
     document.getElementById("previewFrame").classList.toggle("fs-mode", isFs);
     document.getElementById("fsIconExpand").style.display = isFs ? "none" : "block";
     document.getElementById("fsIconCollapse").style.display = isFs ? "block" : "none";
