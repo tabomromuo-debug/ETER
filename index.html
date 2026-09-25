@@ -139,6 +139,7 @@
     display:flex !important; align-items:center !important; justify-content:center !important;
     background:#05070c !important;
   }
+  html.doc-fullscreen .fs-btn{display:none !important;}
   html.doc-fullscreen .frame{
     width:min(92vmin,1100px) !important; height:min(92vmin,1100px) !important;
     margin:0 !important; flex-shrink:0 !important;
@@ -162,11 +163,7 @@
       0 40px 100px rgba(0,0,0,.6),
       0 0 90px rgba(45,212,191,.12) !important;
   }
-  .frame.fs-mode .fs-btn{
-    position:absolute !important;
-    top:.6rem !important;
-    right:.6rem !important;
-  }
+  .frame.fs-mode .fs-btn{display:none !important;}
 
   body:has(.frame:fullscreen) .fs-btn svg,
   body:has(.frame:-webkit-full-screen) .fs-btn svg{
